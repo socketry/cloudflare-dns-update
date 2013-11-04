@@ -1,0 +1,32 @@
+---
+:key: e949a982e76093acbcd21277fcd3915e25163
+:email: samuel@oriontransfer.org
+:zone: oriontransfer.co.nz
+:domain:
+  rec_id: '23414485'
+  rec_tag: 6978e0f1c24639abffb1d23a84ecb102
+  zone_name: oriontransfer.co.nz
+  name: hinoki.oriontransfer.co.nz
+  display_name: hinoki
+  type: A
+  prio: 
+  content: 111.69.246.106
+  display_content: 111.69.246.106
+  ttl: '7200'
+  ttl_ceil: 86400
+  ssl_id: 
+  ssl_status: 
+  ssl_expires_on: 
+  auto_ttl: 0
+  service_mode: '0'
+  props:
+    proxiable: 1
+    cloud_on: 0
+    cf_open: 1
+    ssl: 0
+    expired_ssl: 0
+    expiring_ssl: 0
+    pending_ssl: 0
+    vanity_lock: 0
+  :content: 111.69.238.117
+:content_command: curl ipinfo.io/ip
