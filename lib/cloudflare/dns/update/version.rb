@@ -19,10 +19,10 @@
 # THE SOFTWARE.
 
 
-module CloudFlare
+class CloudFlare
 	module DNS
 		module Update
-			VERSION = "0.0.2"
+			VERSION = "0.0.3"
 		end
 	end
 end

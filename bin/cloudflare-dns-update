@@ -36,12 +36,12 @@ def check_result(result, success_message = 'Finished.')
 end
 
 def get_input(message)
-	$stdout.write(message)
+	$stdout.write(message + ' ')
 	gets.chomp
 end
 
 def run(*command)
-	puts "Running command #{command.inspect}"
+	puts "Running command #{command.join(' ')}"
 	
 	IO.popen(*command) do |io|
 		return io.read.chomp

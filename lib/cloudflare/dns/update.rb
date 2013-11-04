@@ -20,7 +20,7 @@
 
 require "cloudflare/dns/update/version"
 
-module CloudFlare
+class CloudFlare
 	module DNS
 		module Update
 		end
