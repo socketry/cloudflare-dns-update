@@ -48,8 +48,6 @@ def run(*command)
 	end
 end
 
-command = ARGV.shift
-
 opts = Trollop::options do
 	opt :configuration, "Path to the configuration database.", :default => "cloudflare-dns.yml"
 end
