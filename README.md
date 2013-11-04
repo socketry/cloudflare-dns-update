@@ -12,6 +12,14 @@ Install it yourself as:
 
 Run the included `cloudflare-dns-update` tool and you will be walked through the configuration process. You might want to specify a specific configuration file, using the `--configuration /path/to/configuration.yml` option.
 
+### Daily updates using CRON
+
+Simply set up configurations for each domain you wish to update, and add to `/etc/cron.daily/dyndns`, e.g.:
+
+	#!/usr/bin/env sh
+
+	cloudflare-dns-update --configuration /srv/dyndns/hinoki.oriontransfer.co.nz.yml
+
 ## Contributing
 
 1. Fork it
