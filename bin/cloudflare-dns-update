@@ -65,7 +65,7 @@ end
 cloudflare = nil
 
 configuration_store.transaction do |configuration|
-	cloudflare = CloudFlare.new(configuration[:key], configuration[:email])
+	cloudflare = CloudFlare.connection(configuration[:key], configuration[:email])
 end
 
 configuration_store.transaction do |configuration|
@@ -78,21 +78,18 @@ end
 configuration_store.transaction do |configuration|
 	unless configuration[:domain]
 		puts "Getting list of domains for #{configuration[:zone]}..."
-	
-		result = cloudflare.rec_load_all(configuration[:zone])
 		
-		check_result(result) do
-			records = result['response']['recs']['objs']
-			
-			
-			records.each.with_index do |record, index|
-				puts "(#{index}) #{record['name']} #{record['type']} #{record['content']}"
-			end
-			
-			index = get_input "Which record to update?"
-			
-			configuration[:domain] = records[index.to_i]
+		cloudflare.rec_load_all(configuration[:zone])
+		
+		records = result['response']['recs']['objs']
+		
+		records.each.with_index do |record, index|
+			puts "(#{index}) #{record['name']} #{record['type']} #{record['content']}"
 		end
+		
+		index = get_input "Which record to update?"
+		
+		configuration[:domain] = records[index.to_i]
 	end
 end
 
@@ -122,11 +119,9 @@ configuration_store.transaction do |configuration|
 		
 		result = cloudflare.rec_edit(*arguments)
 		
-		check_result(result) do
-			puts "Updating domain content: #{content}"
-			domain['content'] = content
-			configuration[:domain] = domain
-		end
+		puts "Updating domain content: #{content}"
+		domain['content'] = content
+		configuration[:domain] = domain
 	else
 		puts "Content hasn't changed."
 	end
