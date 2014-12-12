@@ -20,6 +20,8 @@ Simply set up configurations for each domain you wish to update, and add to `/et
 
 	cloudflare-dns-update --configuration /srv/dyndns/hinoki.oriontransfer.co.nz.yml
 
+Note that in case you want to update more than one domains in a zone with the same IP address, you can have multiple domains in a configuration file. Follow instructions of the configuration process.
+
 ## Contributing
 
 1. Fork it
