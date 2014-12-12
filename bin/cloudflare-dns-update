@@ -76,10 +76,10 @@ configuration_store.transaction do |configuration|
 end
 
 configuration_store.transaction do |configuration|
-	unless configuration[:domain]
+	unless configuration[:domains]
 		puts "Getting list of domains for #{configuration[:zone]}..."
 		
-		cloudflare.rec_load_all(configuration[:zone])
+		result = cloudflare.rec_load_all(configuration[:zone])
 		
 		records = result['response']['recs']['objs']
 		
@@ -87,9 +87,12 @@ configuration_store.transaction do |configuration|
 			puts "(#{index}) #{record['name']} #{record['type']} #{record['content']}"
 		end
 		
-		index = get_input "Which record to update?"
+		input = get_input "Which record to update?\nYou can select more than one record by separating numbers with comma (e.g. 0,2,5):"
+		indexes = input.split(',').map(&:strip)
 		
-		configuration[:domain] = records[index.to_i]
+		configuration[:domains] = indexes.inject([]) do |a, index|
+			a << records[index.to_i]
+		end
 	end
 end
 
@@ -102,27 +105,29 @@ end
 
 configuration_store.transaction do |configuration|
 	content = run(configuration[:content_command])
-	domain = configuration[:domain]
+	domains = configuration[:domains]
 	
-	if domain['content'] != content
-		puts "Content changed #{content.dump}, updating record..."
-		# zone, type, zoneid, name, content, ttl, service_mode = nil, prio = nil, service = nil, srvname = nil, protocol = nil, weight = nil, port = nil, target = nil
-		
-		arguments = [
-			configuration[:zone],
-			domain['type'],
-			domain['rec_id'],
-			domain['name'],
-			content,
-			domain['ttl']
-		]
-		
-		result = cloudflare.rec_edit(*arguments)
-		
-		puts "Updating domain content: #{content}"
-		domain['content'] = content
-		configuration[:domain] = domain
-	else
-		puts "Content hasn't changed."
+	domains.each do |domain|
+		if domain['content'] != content
+			puts "Content changed #{content.dump}, updating record..."
+			# zone, type, zoneid, name, content, ttl, service_mode = nil, prio = nil, service = nil, srvname = nil, protocol = nil, weight = nil, port = nil, target = nil
+			
+			arguments = [
+				configuration[:zone],
+				domain['type'],
+				domain['rec_id'],
+				domain['name'],
+				content,
+				domain['ttl']
+			]
+			
+			result = cloudflare.rec_edit(*arguments)
+			
+			puts "Updating domain content: #{content}"
+			domain['content'] = content
+			configuration[:domain] = domain
+		else
+			puts "Content hasn't changed."
+		end
 	end
 end
