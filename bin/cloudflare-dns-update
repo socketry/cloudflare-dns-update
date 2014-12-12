@@ -79,7 +79,7 @@ configuration_store.transaction do |configuration|
 	unless configuration[:domain]
 		puts "Getting list of domains for #{configuration[:zone]}..."
 		
-		cloudflare.rec_load_all(configuration[:zone])
+		result = cloudflare.rec_load_all(configuration[:zone])
 		
 		records = result['response']['recs']['objs']
 		
