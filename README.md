@@ -6,7 +6,7 @@ This gem provides a simple executable tool for managing CloudFlare records to pr
 
 Install it yourself as:
 
-    $ gem install cloudflare-dns-update
+	$ gem install cloudflare-dns-update
 
 ## Usage
 
@@ -21,6 +21,14 @@ Simply set up configurations for each domain you wish to update, and add to `/et
 	cloudflare-dns-update --configuration /srv/dyndns/hinoki.oriontransfer.co.nz.yml
 
 Note that in case you want to update more than one domains in a zone with the same IP address, you can have multiple domains in a configuration file. Follow instructions of the configuration process.
+
+The configuration file would end up looking something like this:
+
+	---
+	:key: b10a8db164e0754105b7a99be72e3fe5
+	:email: samuel@oriontransfer.org
+	:zone: oriontransfer.co.nz
+	:content_command: curl ipinfo.io/ip
 
 ## Contributing
 
