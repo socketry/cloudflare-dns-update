@@ -18,17 +18,17 @@ Simply set up configurations for each domain you wish to update, and add to `/et
 
 	#!/usr/bin/env sh
 
-	cloudflare-dns-update --configuration /srv/dyndns/domain.A.yml
-	cloudflare-dns-update --configuration /srv/dyndns/domain.AAAA.yml
+	cloudflare-dns-update --configuration /srv/dyndns/example.A.yml
+	cloudflare-dns-update --configuration /srv/dyndns/example.AAAA.yml
 
 Note that in case you want to update more than one domains in a zone with the same IP address, you can have multiple domains in a configuration file. Follow instructions of the configuration process. Just to note, each domain would be updated with the same content. Having both IPv4 and IPv6 records in the same configuration file is not possible nor recommended. Please create separate configuration files.
 
 The configuration file would end up looking something like this:
 
 	---
-	:key: b10a8db164e0754105b7a99be72e3fe5
-	:email: samuel@oriontransfer.org
-	:zone: oriontransfer.co.nz
+	:key: b10_NOT_A_REAL_KEY_fe5
+	:email: cloudflare-account@example.com
+	:zone: example.com
 	:content_command: curl ipinfo.io/ip
 
 ### IPv6 Support
