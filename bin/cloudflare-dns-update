@@ -27,7 +27,7 @@ require 'cloudflare'
 
 def check_result(result, success_message = 'Finished.')
 	if result['result'] == 'success'
-	    puts success_message
+		puts success_message
 		yield
 	else
 		puts result['msg'] # error message
