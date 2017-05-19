@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright, 2013, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,114 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'trollop'
-require 'yaml/store'
+require 'cloudflare/dns/update/command'
 
-require 'cloudflare'
-
-def check_result(result, success_message = 'Finished.')
-	if result['result'] == 'success'
-		puts success_message
-		yield
-	else
-		puts result['msg'] # error message
-		exit(1)
-	end
-end
-
-def get_input(message)
-	$stdout.write(message + ' ')
-	gets.chomp
-end
-
-def run(*command)
-	puts "Running command #{command.join(' ')}"
-	
-	IO.popen(*command) do |io|
-		return io.read.chomp
-	end
-end
-
-opts = Trollop::options do
-	opt :configuration, "Path to the configuration database.", :default => "cloudflare-dns.yml"
-end
-
-configuration_store = YAML::Store.new(opts[:configuration])
-
-configuration_store.transaction do |configuration|
-	unless configuration[:key] && configuration[:email]
-		puts "This configuration file appears to be new, we require some details."
-		configuration[:key] = get_input "CloudFlare Key:"
-		configuration[:email] = get_input "CloudFlare Email:"
-	end
-end
-
-cloudflare = nil
-
-configuration_store.transaction do |configuration|
-	cloudflare = CloudFlare.connection(configuration[:key], configuration[:email])
-end
-
-configuration_store.transaction do |configuration|
-	unless configuration[:zone]
-		puts "What zone do you want to modify? e.g. 'oriontransfer.co.nz'"
-		configuration[:zone] = get_input "DNS Zone:"
-	end
-end
-
-configuration_store.transaction do |configuration|
-	unless configuration[:domains] || configuration[:domain]
-		puts "Getting list of domains for #{configuration[:zone]}..."
-		
-		result = cloudflare.rec_load_all(configuration[:zone])
-		
-		records = result['response']['recs']['objs']
-		
-		records.each.with_index do |record, index|
-			puts "(#{index}) #{record['name']} #{record['type']} #{record['content']}"
-		end
-		
-		input = get_input "Which record to update?\nYou can select more than one record by separating numbers with comma (e.g. 0,2,5):"
-		indexes = input.split(',').map(&:strip)
-		
-		configuration[:domains] = indexes.inject([]) do |a, index|
-			a << records[index.to_i]
-		end
-	end
-end
-
-configuration_store.transaction do |configuration|
-	unless configuration[:content_command]
-		puts "What command to get content for record? e.g. 'curl ipinfo.io/ip'"
-		configuration[:content_command] = get_input "Command to get latest IP address:"
-	end
-end
-
-configuration_store.transaction do |configuration|
-	content = run(configuration[:content_command])
-	domains = configuration[:domains] || [configuration[:domain]]
-	
-	domains.each do |domain|
-		if domain['content'] != content
-			puts "Content changed #{content.dump}, updating record..."
-			# zone, type, zoneid, name, content, ttl, service_mode = nil, prio = nil, service = nil, srvname = nil, protocol = nil, weight = nil, port = nil, target = nil
-			
-			arguments = [
-				configuration[:zone],
-				domain['type'],
-				domain['rec_id'],
-				domain['name'],
-				content,
-				domain['ttl']
-			]
-			
-			result = cloudflare.rec_edit(*arguments)
-			
-			puts "Updating domain content: #{content}"
-			domain['content'] = content
-			configuration[:domain] = domain
-		else
-			puts "Content hasn't changed."
-		end
-	end
-end
+Cloudflare::DNS::Update::Command::Top.parse(ARGV).invoke

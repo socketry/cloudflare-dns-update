@@ -5,15 +5,15 @@ require 'cloudflare/dns/update/version'
 
 Gem::Specification.new do |spec|
 	spec.name          = "cloudflare-dns-update"
-	spec.version       = CloudFlare::DNS::Update::VERSION
+	spec.version       = Cloudflare::DNS::Update::VERSION
 	spec.authors       = ["Samuel Williams"]
 	spec.email         = ["samuel.williams@oriontransfer.co.nz"]
 	spec.description   = <<-EOF
-	Provides a client tool for updating CloudFlare records, with a specific
+	Provides a client tool for updating Cloudflare records, with a specific
 	emphasis on updating IP addresses for domain records. This provides
 	dyndns-like functionality.
 	EOF
-	spec.summary       = "A dyndns client for CloudFlare."
+	spec.summary       = "A dyndns client for Cloudflare."
 	spec.homepage      = ""
 	spec.license       = "MIT"
 
@@ -22,9 +22,9 @@ Gem::Specification.new do |spec|
 	spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
 	spec.require_paths = ["lib"]
 
+	spec.add_dependency "samovar", "~> 1.3"
+	spec.add_dependency "cloudflare", "~> 3.0"
+
 	spec.add_development_dependency "bundler", "~> 1.3"
 	spec.add_development_dependency "rake"
-	
-	spec.add_dependency "trollop", "~> 2.0.0"
-	spec.add_dependency "cloudflare", "~> 2.0.0"
 end

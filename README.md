@@ -1,6 +1,6 @@
-# CloudFlare::DNS::Update
+# Cloudflare::DNS::Update
 
-This gem provides a simple executable tool for managing CloudFlare records to provide dynamic DNS like functionality. You need to add it to whatever `cron` system your host system uses.
+This gem provides a simple executable tool for managing Cloudflare records to provide dynamic DNS like functionality. You need to add it to whatever `cron` system your host system uses.
 
 ## Installation
 
