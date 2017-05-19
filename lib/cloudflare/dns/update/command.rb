@@ -61,8 +61,7 @@ module Cloudflare::DNS::Update
 					key = configuration[:key]
 					email = configuration[:email]
 					
-					puts "Connecting with #{key}:#{email}"
-					@connection = Cloudflare::Connection.new(key: key, email: email)
+					@connection = Cloudflare.connect(key: key, email: email)
 				end
 			end
 			
