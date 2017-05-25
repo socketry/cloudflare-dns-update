@@ -80,7 +80,7 @@ module Cloudflare::DNS::Update
 					domains = configuration[:domains]
 					
 					while domains.nil? || domains.empty?
-						prompt.puts "Getting list of domains for #{configuration[:zone]}..."
+						prompt.puts "Getting list of domains for #{configuration[:zone][:name]}..."
 						
 						zone_id = configuration[:zone][:id]
 						zone = @connection.zones.find_by_id(zone_id)
