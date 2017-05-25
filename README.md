@@ -4,6 +4,8 @@ This gem provides a simple executable tool for managing Cloudflare records to pr
 
 [![Build Status](https://secure.travis-ci.org/ioquatix/cloudflare-dns-update.svg)](http://travis-ci.org/ioquatix/cloudflare-dns-update)
 
+[![Cloudflare DNS Update Introduction](http://img.youtube.com/vi/lQK6bWuQllM/maxresdefault.jpg)](https://www.youtube.com/watch?v=lQK6bWuQllM&feature=youtu.be&hd=1 "Cloudflare DNS Update Introduction")
+
 ## Installation
 
 Install it yourself as:
