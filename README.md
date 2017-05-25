@@ -2,6 +2,8 @@
 
 This gem provides a simple executable tool for managing Cloudflare records to provide dynamic DNS like functionality. You need to add it to whatever `cron` system your host system uses.
 
+[![Build Status](https://secure.travis-ci.org/ioquatix/cloudflare-dns-update.svg)](http://travis-ci.org/ioquatix/cloudflare-dns-update)
+
 ## Installation
 
 Install it yourself as:
@@ -45,11 +47,15 @@ It is possible to update IPv6 when you have a dynamically allocated prefix. To g
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+## See Also
+
+- [cloudflare](https://github.com/ioquatix/cloudflare) – Provides access to Cloudflare.
+
 ## License
 
 Released under the MIT license.
 
-Copyright, 2013, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2017, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

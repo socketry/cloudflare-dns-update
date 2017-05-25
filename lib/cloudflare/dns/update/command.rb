@@ -48,7 +48,7 @@ module Cloudflare::DNS::Update
 				@store ||= YAML::Store.new(@options[:configuration])
 			end
 			
-			attr :connection
+			attr_accessor :connection
 			
 			def connect!
 				configuration_store.transaction do |configuration|
@@ -141,6 +141,8 @@ module Cloudflare::DNS::Update
 							puts "Content hasn't changed."
 						end
 					end
+					
+					return content
 				end
 			end
 			
