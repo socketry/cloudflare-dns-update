@@ -177,15 +177,13 @@ module Cloudflare::DNS::Update
 				elsif @options[:help]
 					print_usage(program_name)
 				else
-					track_time do
-						connect!
-						
-						initialize_zone
-						initialize_domains
-						initialize_command
-						
-						update_domains
-					end
+					connect!
+					
+					initialize_zone
+					initialize_domains
+					initialize_command
+					
+					update_domains
 				end
 			end
 		end
