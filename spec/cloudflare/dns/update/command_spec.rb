@@ -32,7 +32,7 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
 		puts 
 		
 		subject.configuration_store.transaction do |configuration|
-			configuration[:content_command] = 'curl ipinfo.io/ip'
+			configuration[:content_command] = 'curl -s ipinfo.io/ip'
 			configuration[:zone] = zone.record
 			configuration[:domains] = [dns_record.record]
 		end
