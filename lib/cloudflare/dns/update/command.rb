@@ -126,21 +126,23 @@ module Cloudflare::DNS::Update
 				end
 			end
 			
-			def update_domains
+			def update_domains(content = nil)
 				configuration_store.transaction do |configuration|
-					logger.debug "Executing content command: #{configuration[:content_command]}"
-					content, status = Open3.capture2(configuration[:content_command])
-					
-					unless status.success?
-						raise RuntimeError.new("Content command failed with non-zero output: #{status}")
+					unless content
+						logger.debug "Executing content command: #{configuration[:content_command]}"
+						content, status = Open3.capture2(configuration[:content_command])
+						
+						unless status.success?
+							raise RuntimeError.new("Content command failed with non-zero output: #{status}")
+						end
+						
+						unless zone = @connection.zones.find_by_id(configuration[:zone][:id])
+							raise RuntimeError.new("Couldn't load zone #{configuration[:zone].inspect} from API!")
+						end
+						
+						# Make sure there is no trailing space:
+						content.chomp!
 					end
-					
-					unless zone = @connection.zones.find_by_id(configuration[:zone][:id])
-						raise RuntimeError.new("Couldn't load zone #{configuration[:zone].inspect} from API!")
-					end
-					
-					# Make sure there is no trailing space:
-					content.chomp!
 					
 					if content != configuration[:content] || @options[:force]
 						logger.info "Content changed #{content.inspect}, updating records..."
@@ -169,9 +171,9 @@ module Cloudflare::DNS::Update
 					else
 						logger.debug "Content hasn't changed."
 					end
-					
-					return content
 				end
+				
+				return content
 			end
 			
 			def invoke(program_name: File.basename($0))
