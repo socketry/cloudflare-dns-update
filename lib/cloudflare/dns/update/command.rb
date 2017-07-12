@@ -30,14 +30,39 @@ require_relative 'version'
 
 module Cloudflare::DNS::Update
 	module Command
+		def self.parse(*args)
+			Top.parse(*args)
+		end
+		
 		# The top level utopia command.
 		class Top < Samovar::Command
 			self.description = "Update remote DNS records according to locally run commands."
 			
 			options do
 				option '-c/--configuration <path>', "Use the specified configuration file."
+				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
 				option '-v/--version', "Print out the application version."
+			end
+			
+			def verbose?
+				@options[:logging] == :verbose
+			end
+
+			def quiet?
+				@options[:logging] == :quiet
+			end
+
+			def logger
+				@logger ||= Logger.new($stderr).tap do |logger|
+					if verbose?
+						logger.level = Logger::DEBUG
+					elsif quiet?
+						logger.level = Logger::WARN
+					else
+						logger.level = Logger::INFO
+					end
+				end
 			end
 			
 			def prompt
@@ -95,14 +120,14 @@ module Cloudflare::DNS::Update
 			def initialize_command
 				configuration_store.transaction do |configuration|
 					unless configuration[:content_command]
-						configuration[:content_command] = prompt.ask("What command to get content for record?", default: 'curl ipinfo.io/ip')
+						configuration[:content_command] = prompt.ask("What command to get content for record?", default: 'curl -s ipinfo.io/ip')
 					end
 				end
 			end
 			
 			def update_domains
 				configuration_store.transaction do |configuration|
-					prompt.puts "Executing content command: #{configuration[:content_command]}"
+					logger.debug "Executing content command: #{configuration[:content_command]}"
 					content, status = Open3.capture2(configuration[:content_command])
 					
 					unless status.success?
@@ -119,7 +144,7 @@ module Cloudflare::DNS::Update
 					
 					configuration[:domains].each do |record|
 						if record[:content] != content
-							puts "Content changed #{content.inspect}, updating record..."
+							logger.info "Content changed #{content.inspect}, updating record..."
 							
 							domain = zone.dns_records.find_by_id(record[:id])
 							
@@ -132,13 +157,13 @@ module Cloudflare::DNS::Update
 							response = domain.put(changes.to_json, content_type: 'application/json')
 							
 							if response.successful?
-								puts "Updated domain content to #{content}."
+								logger.info "Updated domain content to #{content}."
 								record[:content] = content
 							else
-								puts "Failed to update domain content to #{content}: #{response.errors.join(', ')}!"
+								logger.warn "Failed to update domain content to #{content}: #{response.errors.join(', ')}!"
 							end
 						else
-							puts "Content hasn't changed."
+							logger.debug "Content hasn't changed."
 						end
 					end
 					

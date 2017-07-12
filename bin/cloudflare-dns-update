@@ -22,4 +22,4 @@
 
 require 'cloudflare/dns/update/command'
 
-Cloudflare::DNS::Update::Command::Top.parse(ARGV).invoke
+Cloudflare::DNS::Update::Command.parse(ARGV).invoke
