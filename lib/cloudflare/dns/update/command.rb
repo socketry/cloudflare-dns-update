@@ -40,6 +40,7 @@ module Cloudflare::DNS::Update
 			
 			options do
 				option '-c/--configuration <path>', "Use the specified configuration file."
+				option '-f/--force', "Force push updates to cloudflare even if content hasn't changed.", default: false
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
 				option '-v/--version', "Print out the application version."
@@ -138,14 +139,13 @@ module Cloudflare::DNS::Update
 						raise RuntimeError.new("Couldn't load zone #{configuration[:zone].inspect} from API!")
 					end
 					
-					domains = configuration[:domains]
-					
+					# Make sure there is no trailing space:
 					content.chomp!
 					
-					configuration[:domains].each do |record|
-						if record[:content] != content
-							logger.info "Content changed #{content.inspect}, updating record..."
-							
+					if content != configuration[:content] || @options[:force]
+						logger.info "Content changed #{content.inspect}, updating records..."
+						
+						configuration[:domains].each do |record|
 							domain = zone.dns_records.find_by_id(record[:id])
 							
 							changes = {
@@ -162,9 +162,12 @@ module Cloudflare::DNS::Update
 							else
 								logger.warn "Failed to update domain content to #{content}: #{response.errors.join(', ')}!"
 							end
-						else
-							logger.debug "Content hasn't changed."
 						end
+						
+						# Save the last value of content:
+						configuration[:content] = content
+					else
+						logger.debug "Content hasn't changed."
 					end
 					
 					return content
