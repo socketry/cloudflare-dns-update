@@ -9,8 +9,8 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
 	subject{described_class.new(["-c", configuration_path])}
 	
 	let(:zone) {connection.zones.all.first}
-	let(:name) {"dyndns"}
-	let(:qualified_name) {"dyndns.#{zone.record[:name]}"}
+	let!(:name) {"dyndns#{ENV['TRAVIS_JOB_ID']}"}
+	let!(:qualified_name) {"#{name}.#{zone.record[:name]}"}
 	
 	it "should create dns record" do
 		response = zone.dns_records.post({
@@ -28,8 +28,6 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
 	
 	it "should update dns record" do
 		subject.connection = connection
-		
-		puts 
 		
 		subject.configuration_store.transaction do |configuration|
 			configuration[:content_command] = 'curl -s ipinfo.io/ip'
