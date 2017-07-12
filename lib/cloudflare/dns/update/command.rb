@@ -39,7 +39,7 @@ module Cloudflare::DNS::Update
 			self.description = "Update remote DNS records according to locally run commands."
 			
 			options do
-				option '-c/--configuration <path>', "Use the specified configuration file."
+				option '-c/--configuration <path>', "Use the specified configuration file.", default: 'dns.conf'
 				option '-f/--force', "Force push updates to cloudflare even if content hasn't changed.", default: false
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
