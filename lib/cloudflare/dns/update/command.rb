@@ -55,15 +55,7 @@ module Cloudflare::DNS::Update
 			end
 
 			def logger
-				@logger ||= Logger.new($stderr).tap do |logger|
-					if verbose?
-						logger.level = Logger::DEBUG
-					elsif quiet?
-						logger.level = Logger::WARN
-					else
-						logger.level = Logger::INFO
-					end
-				end
+				@logger ||= Async.logger
 			end
 			
 			def prompt
@@ -94,9 +86,9 @@ module Cloudflare::DNS::Update
 			def initialize_zone
 				configuration_store.transaction do |configuration|
 					unless configuration[:zone]
-						zone = prompt.select("What zone do you want to update?", @connection.zones.all)
+						zone = prompt.select("What zone do you want to update?", @connection.zones)
 						
-						configuration[:zone] = zone.record
+						configuration[:zone] = zone.value
 					end
 				end
 			end
@@ -111,9 +103,9 @@ module Cloudflare::DNS::Update
 						zone_id = configuration[:zone][:id]
 						zone = @connection.zones.find_by_id(zone_id)
 						
-						dns_records = prompt.multi_select("What records do you want to update (select 1 or more)?", zone.dns_records.all)
+						dns_records = prompt.multi_select("What records do you want to update (select 1 or more)?", zone.dns_records)
 						
-						domains = configuration[:domains] = dns_records.map(&:record)
+						domains = configuration[:domains] = dns_records.map(&:value)
 					end
 				end
 			end
@@ -123,6 +115,25 @@ module Cloudflare::DNS::Update
 					unless configuration[:content_command]
 						configuration[:content_command] = prompt.ask("What command to get content for record?", default: 'curl -s ipinfo.io/ip')
 					end
+				end
+			end
+			
+			def update_domain(zone, record, content)
+				if content != record[:content] || @options[:force]
+					logger.info "Content changed #{content.inspect}, updating records..."
+					
+					domain = zone.dns_records.find_by_id(record[:id])
+						
+					begin
+						domain.update_content(content)
+						
+						logger.info "Updated domain: #{record[:name]} #{record[:type]} #{content}"
+						record[:content] = content
+					rescue => error
+						logger.warn("Failed to update domain: #{record[:name]} #{record[:type]} #{content}") {error}
+					end
+				else
+					logger.debug "Content hasn't changed: #{record[:name]} #{record[:type]} #{content}"
 				end
 			end
 			
@@ -136,40 +147,18 @@ module Cloudflare::DNS::Update
 							raise RuntimeError.new("Content command failed with non-zero output: #{status}")
 						end
 						
-						unless zone = @connection.zones.find_by_id(configuration[:zone][:id])
-							raise RuntimeError.new("Couldn't load zone #{configuration[:zone].inspect} from API!")
-						end
-						
 						# Make sure there is no trailing space:
 						content.chomp!
+						
+						configuration[:content] = content
 					end
 					
-					if content != configuration[:content] || @options[:force]
-						logger.info "Content changed #{content.inspect}, updating records..."
-						
-						configuration[:domains].each do |record|
-							domain = zone.dns_records.find_by_id(record[:id])
-							
-							changes = {
-								type: domain.record[:type],
-								name: domain.record[:name],
-								content: content
-							}
-							
-							response = domain.put(changes.to_json, content_type: 'application/json')
-							
-							if response.successful?
-								logger.info "Updated domain content to #{content}."
-								record[:content] = content
-							else
-								logger.warn "Failed to update domain content to #{content}: #{response.errors.join(', ')}!"
-							end
-						end
-						
-						# Save the last value of content:
-						configuration[:content] = content
-					else
-						logger.debug "Content hasn't changed."
+					unless zone = @connection.zones.find_by_id(configuration[:zone][:id])
+						raise RuntimeError.new("Couldn't load zone #{configuration[:zone].inspect} from API!")
+					end
+					
+					configuration[:domains].each do |record|
+						update_domain(zone, record, content)
 					end
 				end
 				
@@ -182,6 +171,12 @@ module Cloudflare::DNS::Update
 				elsif @options[:help]
 					print_usage(program_name)
 				else
+					if verbose?
+						Async.logger.debug!
+					elsif quiet?
+						Async.logger.warn!
+					end
+					
 					connect!
 					
 					initialize_zone

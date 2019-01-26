@@ -1,27 +1,19 @@
 
 require 'cloudflare/dns/update/command'
 
-RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
+RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined, timeout: 60 do
 	include_context Cloudflare::RSpec::Connection
 	
 	let(:configuration_path) {File.join(__dir__, 'test.yaml')}
 	
 	subject{described_class.new(["-c", configuration_path])}
 	
-	let(:zone) {connection.zones.all.first}
+	let(:zone) {connection.zones.first}
 	let!(:name) {"dyndns#{ENV['TRAVIS_JOB_ID']}"}
-	let!(:qualified_name) {"#{name}.#{zone.record[:name]}"}
+	let!(:qualified_name) {"#{name}.#{zone.name}"}
 	
 	it "should create dns record" do
-		response = zone.dns_records.post({
-			type: "A",
-			name: name,
-			content: "127.0.0.1",
-			ttl: 240,
-			proxied: false
-		}.to_json, content_type: 'application/json')
-		
-		expect(response).to be_successful
+		zone.dns_records.create("A", name, "127.0.0.1", ttl: 240, proxied: false)
 	end
 	
 	let(:dns_record) {zone.dns_records.find_by_name(qualified_name)}
@@ -31,8 +23,8 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
 		
 		subject.configuration_store.transaction do |configuration|
 			configuration[:content_command] = 'curl -s ipinfo.io/ip'
-			configuration[:zone] = zone.record
-			configuration[:domains] = [dns_record.record]
+			configuration[:zone] = zone.value
+			configuration[:domains] = [dns_record.value]
 		end
 		
 		content = subject.update_domains
@@ -43,6 +35,6 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined do
 	end
 	
 	it "should delete dns record" do
-		expect(dns_record.delete).to be_successful
+		expect(dns_record.delete).to be_success
 	end
 end

@@ -23,9 +23,11 @@ Gem::Specification.new do |spec|
 	spec.require_paths = ["lib"]
 
 	spec.add_dependency "samovar", "~> 1.3"
-	spec.add_dependency "tty-prompt", "~> 0.12.0"
-	spec.add_dependency "cloudflare", "~> 3.0"
-
+	spec.add_dependency "tty-prompt", "~> 0.12"
+	spec.add_dependency "cloudflare", "~> 4.0"
+	
+	spec.add_development_dependency 'async-rspec'
+	
 	spec.add_development_dependency "rspec", "~> 3.6"
 	spec.add_development_dependency "bundler", "~> 1.3"
 	spec.add_development_dependency "rake"
