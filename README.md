@@ -3,6 +3,7 @@
 This gem provides a simple executable tool for managing Cloudflare records to provide dynamic DNS like functionality. You need to add it to whatever `cron` system your host system uses.
 
 [![Build Status](https://secure.travis-ci.org/ioquatix/cloudflare-dns-update.svg)](http://travis-ci.org/ioquatix/cloudflare-dns-update)
+[![Coverage Status](https://coveralls.io/repos/socketry/cloudflare-dns-update/badge.svg)](https://coveralls.io/r/socketry/cloudflare-dns-update)
 
 [![Cloudflare DNS Update Introduction](http://img.youtube.com/vi/lQK6bWuQllM/maxresdefault.jpg)](https://www.youtube.com/watch?v=lQK6bWuQllM&feature=youtu.be&hd=1 "Cloudflare DNS Update Introduction")
 
