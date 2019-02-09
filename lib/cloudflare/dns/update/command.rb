@@ -81,6 +81,16 @@ module Cloudflare::DNS::Update
 					
 					@connection = Cloudflare.connect(key: key, email: email)
 				end
+				
+				return @connection unless block_given?
+				
+				begin
+					yield @connection
+				rescue Interrupt
+					# Exit gracefully
+				ensure
+					@connection.close
+				end
 			end
 			
 			def initialize_zone
@@ -177,13 +187,15 @@ module Cloudflare::DNS::Update
 						Async.logger.warn!
 					end
 					
-					connect!
-					
-					initialize_zone
-					initialize_domains
-					initialize_command
-					
-					update_domains
+					Async do
+						connect! do
+							initialize_zone
+							initialize_domains
+							initialize_command
+							
+							update_domains
+						end
+					end.wait
 				end
 			end
 		end
