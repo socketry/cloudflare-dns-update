@@ -22,7 +22,7 @@
 module Cloudflare
 	module DNS
 		module Update
-			VERSION = "2.4.0"
+			VERSION = "2.4.1"
 		end
 	end
 end
