@@ -9,7 +9,7 @@ RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined, timeout: 
 	subject{described_class.new(["-c", configuration_path])}
 	
 	let(:zone) {connection.zones.first}
-	let!(:name) {"dyndns#{ENV['TRAVIS_JOB_ID']}"}
+	let!(:name) {"dyndns-#{ENV['INVOCATION_ID']}"}
 	let!(:qualified_name) {"#{name}.#{zone.name}"}
 	
 	it "should create dns record" do
