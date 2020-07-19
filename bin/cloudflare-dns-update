@@ -27,6 +27,6 @@ begin
 rescue Interrupt
 	# Ignore.
 rescue => error
-	Async.logger.error(Falcon::Command) {error}
+	Async.logger.error(Cloudflare::DNS::Update::Command) {error}
 	exit! 1
 end
