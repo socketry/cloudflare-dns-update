@@ -22,8 +22,8 @@ Gem::Specification.new do |spec|
 	spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
 	spec.require_paths = ["lib"]
 
-	spec.add_dependency "samovar", "~> 1.3"
-	spec.add_dependency "tty-prompt", "~> 0.16.0"
+	spec.add_dependency "samovar", "~> 2.0"
+	spec.add_dependency "tty-prompt", "~> 0.21"
 	spec.add_dependency "cloudflare", "~> 4.0"
 	
 	spec.add_development_dependency 'async-rspec'

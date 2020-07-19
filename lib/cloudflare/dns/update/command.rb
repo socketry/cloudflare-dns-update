@@ -30,8 +30,8 @@ require_relative 'version'
 
 module Cloudflare::DNS::Update
 	module Command
-		def self.parse(*args)
-			Top.parse(*args)
+		def self.call(*arguments)
+			Top.call(*arguments)
 		end
 		
 		# The top level utopia command.
@@ -41,19 +41,9 @@ module Cloudflare::DNS::Update
 			options do
 				option '-c/--configuration <path>', "Use the specified configuration file.", default: 'dns.conf'
 				option '-f/--force', "Force push updates to cloudflare even if content hasn't changed.", default: false
-				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-				option '-h/--help', "Print out help information."
 				option '-v/--version', "Print out the application version."
 			end
 			
-			def verbose?
-				@options[:logging] == :verbose
-			end
-
-			def quiet?
-				@options[:logging] == :quiet
-			end
-
 			def logger
 				@logger ||= Async.logger
 			end
@@ -71,15 +61,11 @@ module Cloudflare::DNS::Update
 			def connect!
 				configuration_store.transaction do |configuration|
 					unless configuration[:key]
-						prompt.puts "This configuration file appears to be new, we require some details."
-						configuration[:key] = prompt.mask("Cloudflare Key:")
-						configuration[:email] = prompt.ask("Cloudflare Email:")
+						prompt.puts "This configuration does not contain authorization token, we require some details."
+						configuration[:token] = prompt.mask("Cloudflare token:")
 					end
 					
-					key = configuration[:key]
-					email = configuration[:email]
-					
-					@connection = Cloudflare.connect(key: key, email: email)
+					@connection = Cloudflare.connect(token: configuration[:token])
 				end
 				
 				return @connection unless block_given?
@@ -175,19 +161,13 @@ module Cloudflare::DNS::Update
 				return content
 			end
 			
-			def invoke(program_name: File.basename($0))
+			def call
 				if @options[:version]
 					puts VERSION
 				elsif @options[:help]
-					print_usage(program_name)
+					print_usage
 				else
-					if verbose?
-						Async.logger.debug!
-					elsif quiet?
-						Async.logger.warn!
-					end
-					
-					Async do
+					Sync do
 						connect! do
 							initialize_zone
 							initialize_domains
@@ -195,7 +175,7 @@ module Cloudflare::DNS::Update
 							
 							update_domains
 						end
-					end.wait
+					end
 				end
 			end
 		end
