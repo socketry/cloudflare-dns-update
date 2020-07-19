@@ -60,7 +60,7 @@ module Cloudflare::DNS::Update
 			
 			def connect!
 				configuration_store.transaction do |configuration|
-					unless configuration[:key]
+					unless configuration[:token]
 						prompt.puts "This configuration does not contain authorization token, we require some details."
 						configuration[:token] = prompt.mask("Cloudflare token:")
 					end
