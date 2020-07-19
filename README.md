@@ -5,50 +5,25 @@ This gem provides a simple executable tool for managing Cloudflare records to pr
 [![Build Status](https://secure.travis-ci.org/ioquatix/cloudflare-dns-update.svg)](http://travis-ci.org/ioquatix/cloudflare-dns-update)
 [![Coverage Status](https://coveralls.io/repos/socketry/cloudflare-dns-update/badge.svg)](https://coveralls.io/r/socketry/cloudflare-dns-update)
 
-[![Cloudflare DNS Update Introduction](http://img.youtube.com/vi/lQK6bWuQllM/maxresdefault.jpg)](https://www.youtube.com/watch?v=lQK6bWuQllM&feature=youtu.be&hd=1 "Cloudflare DNS Update Introduction")
+## Features
 
-## Installation
-
-Install it yourself as:
-
-	$ gem install cloudflare-dns-update
+- Token based authorization to minimise risk.
+- Handles both IPv4 and IPv6 with custom commands.
+- Can update any record type with any command output.
 
 ## Usage
 
-Run the included `cloudflare-dns-update` tool and you will be walked through the configuration process. You might want to specify a specific configuration file, using the `--configuration /path/to/configuration.yml` option.
-
-### Daily updates using CRON
-
-Simply set up configurations for each domain you wish to update, and add to `/etc/cron.daily/dyndns`, e.g.:
-
-	#!/usr/bin/env sh
-
-	cloudflare-dns-update --configuration /srv/dyndns/example.A.yml
-	cloudflare-dns-update --configuration /srv/dyndns/example.AAAA.yml
-
-Note that in case you want to update more than one domains in a zone with the same IP address, you can have multiple domains in a configuration file. Follow instructions of the configuration process. Just to note, each domain would be updated with the same content. Having both IPv4 and IPv6 records in the same configuration file is not possible nor recommended. Please create separate configuration files.
-
-The configuration file would end up looking something like this:
-
-	---
-	:key: b10_NOT_A_REAL_KEY_fe5
-	:email: cloudflare-account@example.com
-	:zone: example.com
-	:content_command: curl ipinfo.io/ip
-
-### IPv6 Support
-
-It is possible to update IPv6 when you have a dynamically allocated prefix. To get your current IPv6 address, the following command can be used:
-
-	/sbin/ip -6 addr | awk -F '[ \t]+|/' '$3 == "::1" { next;} $3 ~ /^fe80::/ { next ; } /inet6/ {print $3}'
+Please see the [project documentation](https://socketry.github.io/cloudflare-dns-update).
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+We welcome contributions to this project.
+
+1.  Fork it.
+2.  Create your feature branch (`git checkout -b my-new-feature`).
+3.  Commit your changes (`git commit -am 'Add some feature'`).
+4.  Push to the branch (`git push origin my-new-feature`).
+5.  Create new Pull Request.
 
 ## See Also
 
