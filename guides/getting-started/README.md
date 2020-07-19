@@ -14,7 +14,7 @@ $ gem install cloudflare-dns-update
 
 Run the included `cloudflare-dns-update` tool and you will be walked through the configuration process. You might want to specify a specific configuration file, using the `--configuration /path/to/configuration.yml` option.
 
-<content:youtube id="lQK6bWuQllM" />
+<content:youtube-video id="lQK6bWuQllM" />
 
 ### Token Setup
 
