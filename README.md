@@ -2,14 +2,13 @@
 
 This gem provides a simple executable tool for managing Cloudflare records to provide dynamic DNS like functionality. You need to add it to whatever `cron` system your host system uses.
 
-[![Build Status](https://secure.travis-ci.org/ioquatix/cloudflare-dns-update.svg)](http://travis-ci.org/ioquatix/cloudflare-dns-update)
-[![Coverage Status](https://coveralls.io/repos/socketry/cloudflare-dns-update/badge.svg)](https://coveralls.io/r/socketry/cloudflare-dns-update)
+[![Development Status](https://github.com/socketry/cloudflare-dns-update/workflows/Development/badge.svg)](https://github.com/socketry/cloudflare-dns-update/actions?workflow=Development)
 
 ## Features
 
-- Token based authorization to minimise risk.
-- Handles both IPv4 and IPv6 with custom commands.
-- Can update any record type with any command output.
+  - Token based authorization to minimise risk.
+  - Handles both IPv4 and IPv6 with custom commands.
+  - Can update any record type with any command output.
 
 ## Usage
 
@@ -27,7 +26,7 @@ We welcome contributions to this project.
 
 ## See Also
 
-- [cloudflare](https://github.com/ioquatix/cloudflare) – Provides access to Cloudflare.
+  - [cloudflare](https://github.com/ioquatix/cloudflare) – Provides access to Cloudflare.
 
 ## License
 
