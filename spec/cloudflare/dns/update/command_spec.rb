@@ -3,17 +3,16 @@ require 'cloudflare/dns/update/command'
 
 RSpec.describe Cloudflare::DNS::Update::Command::Top, order: :defined, timeout: 60 do
 	include_context Cloudflare::RSpec::Connection
+	include_context Cloudflare::Zone
 	
 	let(:configuration_path) {File.join(__dir__, 'test.yaml')}
 	
 	subject{described_class.new(["-c", configuration_path])}
 	
-	let(:zone) {connection.zones.first}
-	let!(:name) {"dyndns-#{ENV['INVOCATION_ID']}"}
-	let!(:qualified_name) {"#{name}.#{zone.name}"}
+	let!(:qualified_name) {"#{subdomain}.#{zone.name}"}
 	
 	it "should create dns record" do
-		zone.dns_records.create("A", name, "127.0.0.1", ttl: 240, proxied: false)
+		zone.dns_records.create("A", subdomain, "127.0.0.1", ttl: 240, proxied: false)
 	end
 	
 	let(:dns_record) {zone.dns_records.find_by_name(qualified_name)}
