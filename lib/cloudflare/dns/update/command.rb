@@ -45,7 +45,7 @@ module Cloudflare::DNS::Update
 			end
 			
 			def logger
-				@logger ||= Async.logger
+				@logger ||= Console.logger
 			end
 			
 			def prompt
