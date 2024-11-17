@@ -1,20 +1,8 @@
-*.gem
-*.rbc
-.bundle
-.config
-.yardoc
+/.bundle/
+/pkg/
 /gems.locked
-InstalledFiles
-_yardoc
-coverage
-doc/
-lib/bundler/man
-pkg
-rdoc
-spec/reports
-test/tmp
-test/version_tmp
-tmp
+/.covered.db
+/external
 
-.rspec_status
-spec/**/test.yaml
+/.env
+/test/**/test.yaml

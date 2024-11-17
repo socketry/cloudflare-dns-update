@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
@@ -20,13 +21,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../lib/cloudflare/dns/update/command'
+require_relative "../lib/cloudflare/dns/update/command"
 
 begin
 	Cloudflare::DNS::Update::Command.call
 rescue Interrupt
 	# Ignore.
 rescue => error
-	Console.logger.error(Cloudflare::DNS::Update::Command) {error}
+	Console.error(Cloudflare::DNS::Update::Command, error)
 	exit! 1
 end
